@@ -89,4 +89,28 @@ class JwtAuth{
         return $this->token;
     }
 
+    /**
+     * @return array
+     */
+    public function getHeader(): array
+    {
+        return json_decode($this->base64url_decode($this->header,true));
+    }
+
+    /**
+     * @return array
+     */
+    public function getPayload(): array
+    {
+        return json_decode($this->base64url_decode($this->payload,true));
+    }
+
+    /**
+     * @return string
+     */
+    public function getKey(): string
+    {
+        return $this->key;
+    }
+
 }
