@@ -1,0 +1,22 @@
+  {
+  "name": "pakpak/jwt-auth",
+  "description": "Biblioteca PHP para a manipulação de JWT",
+  "minimum-stability": "dev",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Davi Lhlapak Rosa",
+      "email": "davilhlapak@hotmail.com",
+      "homepage": "https://www.davilhlapak.com.br"
+    }
+  ],
+  "require": {
+    "php": "^7.3",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "PakPak\\JwtAuth\\": "src"
+    }
+  }
+}
