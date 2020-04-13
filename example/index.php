@@ -2,7 +2,7 @@
 
 require __DIR__ . "./../vendor/autoload.php";
 
-//Criando um JWT:
+//Creating a JWT
 
 use PakPak\JwtAuth\JwtAuth;
 
@@ -20,32 +20,32 @@ $key = "My-Secret-Key";
 
 $jwtAuth = new JwtAuth($header,$payload,$key);
 
-//Especificando o Algoritmo de hash para a criação do JWT:
+//Specifying the hash algorithm for JWT creation
 
 $hashingAlgorithm = "sha256";
 
 $jwtAuth = new JwtAuth($header,$payload,$key,$hashingAlgorithm);
 
-//Criando um JWT a partir de um token:
+//Creating a JWT from a token
 
 $jwtToken = "header.payload.sign";
 
-//Algoritmo usado para o hash do JWT
+//Algorithm used for the JWT hash
 $hashingAlgorithm = "sha256";
 
 $jwtAuth2 = JwtAuth::byToken($jwtToken,$hashingAlgorithm);
 
-//Recuperando Informações:
+//Recovering data:
 
-// - Retorna uma String contendo o token JWT
+// - Returns a String containing the JWT Token
 $jwtAuth->getToken();
 
-// - Faz a validação do token criado utilizando da chave de acesso
+// - Validates the token created using the access key
 $jwtAuth->verifyJwt("My-Secret-Key");
 
-// - Retorna um array contendo o Header
+// - Returns an array containing the Header
 $jwtAuth->getHeader();
 
-// - Retorna um array contendo o Payload
+// - Returns an array containing the Payload
 $jwtAuth->getPayload();
 
