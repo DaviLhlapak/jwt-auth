@@ -17,7 +17,7 @@ composer require pakpak/jwt-auth
 
 ## Documentação
 
-Criando um JWT:
+- Criando um JWT:
 
 ```php
 use PakPak\JwtAuth\JwtAuth;
@@ -37,7 +37,7 @@ $key = "My-Secret-Key";
 $jwtAuth = new JwtAuth($header,$payload,$key);
 ```
 
-Especificando o Algoritmo de hash para a criação do JWT:
+- Especificando o Algoritmo de hash para a criação do JWT:
 
 ```php
 use PakPak\JwtAuth\JwtAuth;
@@ -47,19 +47,20 @@ $hashingAlgorithm = "sha256";
 $jwtAuth = new JwtAuth($header,$payload,$key,$hashingAlgorithm);
 ```
 
-Criando um JWT a partir de um token:
+- Criando um JWT a partir de um token:
 
 ```php
 use PakPak\JwtAuth\JwtAuth;
 
 $jwtToken = "header.payload.sign";
 
+//Algoritmo usado para o hash do JWT
 $hashingAlgorithm = "sha256";
 
 $jwtAuth2 = JwtAuth::byToken($jwtToken,$hashingAlgorithm);
 ```
 
-Recuperando Informações:
+- Recuperando Informações:
 ```php
 //Retorna uma String contendo o token JWT
 $jwtAuth->getToken();

@@ -20,19 +20,32 @@ $key = "My-Secret-Key";
 
 $jwtAuth = new JwtAuth($header,$payload,$key);
 
+//Especificando o Algoritmo de hash para a criação do JWT:
+
+$hashingAlgorithm = "sha256";
+
+$jwtAuth = new JwtAuth($header,$payload,$key,$hashingAlgorithm);
+
+//Criando um JWT a partir de um token:
+
+$jwtToken = "header.payload.sign";
+
+//Algoritmo usado para o hash do JWT
+$hashingAlgorithm = "sha256";
+
+$jwtAuth2 = JwtAuth::byToken($jwtToken,$hashingAlgorithm);
+
 //Recuperando Informações:
 
-//-Retorna uma String contendo o token JWT
+// - Retorna uma String contendo o token JWT
 $jwtAuth->getToken();
 
-//-Faz a validação do token criado utilizando da chave de acesso
+// - Faz a validação do token criado utilizando da chave de acesso
 $jwtAuth->verifyJwt("My-Secret-Key");
 
-//-Retorna um array contendo o Header
+// - Retorna um array contendo o Header
 $jwtAuth->getHeader();
 
-//-Retorna um array contendo o Payload
+// - Retorna um array contendo o Payload
 $jwtAuth->getPayload();
-
-$jwtAuth2 = JwtAuth::byToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJsb2NhbGhvc3QiLCJzdWIiOiJVc2VyIE5hbWUgWW9zaGkifQ.2odzoYvJRfeYkUid5j8tssWL67QFOMSFgqzJDfOvcEE", "sha256");
 
