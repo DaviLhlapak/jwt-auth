@@ -27,28 +27,29 @@ class JwtAuth{
      * @param array $payload
      * @param string $key
      * @param string $hashingAlgorithm
+     * @param bool $generateNow
      */
-    public function __construct(array $header, array $payload, string $key, string $hashingAlgorithm = 'sha256')
+    public function __construct(array $header, array $payload, string $key, string $hashingAlgorithm = 'sha256', bool $generateNow = true)
     {
         $this->header = base64url_encode(json_encode($header));
         $this->payload = base64url_encode(json_encode($payload));
         $this->hashingAlgorithm = $hashingAlgorithm;
 
-        $this->generateJwt($key);
+        if($generateNow){$this->generateJwt($key);}
     }
 
     /**
      * @param string $token
-     * @param string $key
      * @param string $hashingAlgorithm
      * @return JwtAuth|null
      */
-    public static function byToken(string $token, string $key, string $hashingAlgorithm = 'sha256'){
+    public static function byToken(string $token, string $hashingAlgorithm){
         $part = explode(".",$token);
         $header = (array) json_decode(base64url_decode($part[0]));
         $payload = (array) json_decode(base64url_decode($part[1]));
 
-        $jwt = new JwtAuth($header,$payload,$key,$hashingAlgorithm);
+        $jwt = new JwtAuth($header,$payload,"",$hashingAlgorithm,false);
+        $jwt->token = $token;
 
         if ($jwt->getToken() == $token){
             return $jwt;
