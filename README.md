@@ -1,23 +1,23 @@
 # Jwt-Auth
-Biblioteca PHP para a manipulação de JWT em PHP nativo.
+A PHP library for JWT manipulation using native PHP.
 
-## Instalação
+## Installation
 
-Jwt-Auth está disponível via Composer:
+Jwt-Auth is avaliable via Composer
 
 ```bash
 "pakpak/jwt-auth": "^1.0"
 ```
 
-ou pelo terminal:
+or via terminal:
 
 ```bash
 composer require pakpak/jwt-auth
 ```
 
-## Documentação
+## Documentation
 
-- Criando um JWT:
+- Creating a JWT:
 
 ```php
 use PakPak\JwtAuth\JwtAuth;
@@ -37,7 +37,7 @@ $key = "My-Secret-Key";
 $jwtAuth = new JwtAuth($header,$payload,$key);
 ```
 
-- Especificando o Algoritmo de hash para a criação do JWT:
+- Specifying the hash algorithm for JWT creation
 
 ```php
 use PakPak\JwtAuth\JwtAuth;
@@ -47,30 +47,30 @@ $hashingAlgorithm = "sha256";
 $jwtAuth = new JwtAuth($header,$payload,$key,$hashingAlgorithm);
 ```
 
-- Criando um JWT a partir de um token:
+- Creating a JWT from a token
 
 ```php
 use PakPak\JwtAuth\JwtAuth;
 
 $jwtToken = "header.payload.sign";
 
-//Algoritmo usado para o hash do JWT
+//Algorithm used for the JWT hash
 $hashingAlgorithm = "sha256";
 
 $jwtAuth2 = JwtAuth::byToken($jwtToken,$hashingAlgorithm);
 ```
 
-- Recuperando Informações:
+- Recovering data:
 ```php
-//Retorna uma String contendo o token JWT
+//Returns a String containing the JWT Token
 $jwtAuth->getToken();
 
-//Faz a validação do token criado utilizando da chave de acesso
+//Validates the token created using the access key
 $jwtAuth->verifyJwt("My-Secret-Key");
 
-//Retorna um array contendo o Header
+//Returns an array containing the Header
 $jwtAuth->getHeader();
 
-//Retorna um array contendo o Payload
+//Returns an array containing the Payload
 $jwtAuth->getPayload();
 ```
