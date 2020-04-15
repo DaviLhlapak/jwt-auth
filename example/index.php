@@ -5,6 +5,7 @@ require __DIR__ . "./../vendor/autoload.php";
 //Creating a JWT
 
 use PakPak\JwtAuth\JwtAuth;
+use PakPak\JwtAuth\JwtException;
 
 $header = [
     'typ' => 'JWT',
@@ -18,13 +19,23 @@ $payload = [
 
 $key = "My-Secret-Key";
 
-$jwtAuth = new JwtAuth($header,$payload,$key);
+try {
+    $jwtAuth = new JwtAuth($header, $payload, $key);
+} catch (JwtException $e) {
+    var_dump($e->getMessage());
+    die();
+}
 
 //Specifying the hash algorithm for JWT creation
 
 $hashingAlgorithm = "sha256";
 
-$jwtAuth = new JwtAuth($header,$payload,$key,$hashingAlgorithm);
+try {
+    $jwtAuth = new JwtAuth($header, $payload, $key, $hashingAlgorithm);
+} catch (JwtException $e) {
+    var_dump($e->getMessage());
+    die();
+}
 
 //Creating a JWT from a token
 
@@ -33,7 +44,12 @@ $jwtToken = "header.payload.sign";
 //Algorithm used for the JWT hash
 $hashingAlgorithm = "sha256";
 
-$jwtAuth2 = JwtAuth::byToken($jwtToken,$hashingAlgorithm);
+try {
+    $jwtAuth2 = JwtAuth::byToken($jwtToken, $hashingAlgorithm);
+} catch (JwtException $e) {
+    var_dump($e->getMessage());
+    die();
+}
 
 //Recovering data:
 

@@ -27,28 +27,43 @@ class JwtAuth{
      * @param array $payload
      * @param string $key
      * @param string $hashingAlgorithm
-     * @param bool $generateNow
+     * @throws JwtException
      */
-    public function __construct(array $header, array $payload, string $key, string $hashingAlgorithm = 'sha256', bool $generateNow = true)
+    public function __construct(array $header, array $payload, string $key, string $hashingAlgorithm = 'sha256')
     {
+
+        if (empty($header)){
+            throw new JwtException("Header cannot be empty",1);
+        }
+
+        if (empty($payload)){
+            throw new JwtException("Payload cannot be empty",2);
+        }
+
         $this->header = base64url_encode(json_encode($header));
         $this->payload = base64url_encode(json_encode($payload));
-        $this->hashingAlgorithm = $hashingAlgorithm;
+        $this->hashingAlgorithm = $hashingAlgorithm??'sha256';
 
-        if($generateNow){$this->generateJwt($key);}
+        if($key != "" && $key != null){$this->generateJwt($key);}
     }
 
     /**
      * @param string $token
      * @param string $hashingAlgorithm
      * @return JwtAuth|null
+     * @throws JwtException
      */
-    public static function byToken(string $token, string $hashingAlgorithm){
+    public static function byToken(string $token, string $hashingAlgorithm):JwtAuth{
         $part = explode(".",$token);
         $header = (array) json_decode(base64url_decode($part[0]));
         $payload = (array) json_decode(base64url_decode($part[1]));
 
-        $jwt = new JwtAuth($header,$payload,"",$hashingAlgorithm,false);
+        try{
+            $jwt = new JwtAuth($header,$payload,"",$hashingAlgorithm);
+        }catch (JwtException $e){
+            throw $e;
+        }
+
         $jwt->token = $token;
 
         if ($jwt->getToken() == $token){
@@ -69,7 +84,11 @@ class JwtAuth{
     }
 
 
-    public function verifyJwt(string $key){
+    /**
+     * @param string $key
+     * @return bool
+     */
+    public function verifyJwt(string $key):bool {
         $part = explode(".",$this->token);
         $sign = $part[2];
 
