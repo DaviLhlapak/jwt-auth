@@ -1,4 +1,4 @@
-  {
+{
   "name": "pakpak/jwt-auth",
   "description": "Biblioteca PHP para a manipulação de JWT",
   "minimum-stability": "stable",
@@ -17,9 +17,9 @@
   "autoload": {
     "psr-4": {
       "PakPak\\JwtAuth\\": "src"
-    },
-    "files": [
-      "src/Functions.php"
-    ]
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "9"
   }
 }
