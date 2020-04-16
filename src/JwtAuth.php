@@ -8,94 +8,105 @@ namespace PakPak\JwtAuth;
  */
 class JwtAuth{
 
-    /** @var array */
+    /** @var string */
     private $header;
 
-    /** @var array */
+    /** @var string */
     private $payload;
 
     /** @var string */
-    private $token;
-
-    /** @var string */
-    private $hashingAlgorithm;
-
+    private $sign;
 
     /**
-     * JwtAuth constructor.
-     * @param array $header
-     * @param array $payload
-     * @param string $key
-     * @param string $hashingAlgorithm
+     * @param string $token
+     * @return JwtAuth
      * @throws JwtException
      */
-    public function __construct(array $header, array $payload, string $key, string $hashingAlgorithm = 'sha256')
-    {
+    public static function byJwt(string $token):JwtAuth{
+        $part = explode(".",$token);
+
+        $header = $part[0];
+        $payload = $part[1];
+        $sign = $part[2];
 
         if (empty($header)){
             throw new JwtException("Header cannot be empty",1);
         }
-
         if (empty($payload)){
             throw new JwtException("Payload cannot be empty",2);
         }
+        if (empty($sign)){
+            throw new JwtException("Sign cannot be empty",5);
+        }
 
-        $this->header = $this->base64url_encode(json_encode($header));
-        $this->payload = $this->base64url_encode(json_encode($payload));
-        $this->hashingAlgorithm = $hashingAlgorithm??'sha256';
+        $jwt = new JwtAuth();
 
-        if($key != "" && $key != null){$this->generateJwt($key);}
+        $jwt->header = $header;
+        $jwt->payload = $payload;
+        $jwt->sign = $sign;
+
+        return $jwt;
     }
 
     /**
-     * @param string $token
+     * @param array $header
+     * @param array $payload
+     * @param string $key
      * @param string $hashingAlgorithm
-     * @return JwtAuth|null
+     * @return JwtAuth
      * @throws JwtException
      */
-    public static function byToken(string $token, string $hashingAlgorithm):JwtAuth{
-        $part = explode(".",$token);
-        $header = (array) json_decode(self::base64url_decode($part[0]));
-        $payload = (array) json_decode(self::base64url_decode($part[1]));
+    public static function createJwt(array $header, array $payload, string $key, string $hashingAlgorithm = 'sha256'):JwtAuth{
 
-        try{
-            $jwt = new JwtAuth($header,$payload,"",$hashingAlgorithm);
-        }catch (JwtException $e){
-            throw $e;
+        if (empty($header)){
+            throw new JwtException("Header cannot be empty",1);
+        }
+        if (empty($payload)){
+            throw new JwtException("Payload cannot be empty",2);
+        }
+        if (empty($key)){
+            throw new JwtException("Secret Key cannot be empty",3);
         }
 
-        $jwt->token = $token;
+        $validAlgorithms = hash_algos();
 
-        if ($jwt->getToken() == $token){
-            return $jwt;
-        }else{
-            return null;
+        if (empty($hashingAlgorithm) || !in_array($hashingAlgorithm, $validAlgorithms, true)){
+            throw new JwtException("Choose a valid hash algorithm",4);
         }
+
+        $jwt = new JwtAuth();
+
+        $jwt->header = self::base64url_encode(json_encode($header));
+        $jwt->payload = self::base64url_encode(json_encode($payload));
+
+        $sign = hash_hmac($hashingAlgorithm, "{$jwt->header}.{$jwt->payload}", $key, true);
+        $jwt->sign = self::base64url_encode($sign);
+
+        return $jwt;
     }
 
     /**
      * @param string $key
-     */
-    private function generateJwt(string $key){
-        $sign = hash_hmac($this->hashingAlgorithm, "{$this->header}.{$this->payload}", $key, true);
-        $sign = $this->base64url_encode($sign);
-
-        $this->token = "{$this->header}.{$this->payload}.{$sign}";
-    }
-
-
-    /**
-     * @param string $key
+     * @param string $hashingAlgorithm
      * @return bool
+     * @throws JwtException
      */
-    public function verifyJwt(string $key):bool {
-        $part = explode(".",$this->token);
-        $sign = $part[2];
+    public function verifyJwt(string $key, string $hashingAlgorithm = 'sha256'):bool {
 
-        $valid = hash_hmac($this->hashingAlgorithm, "{$this->header}.{$this->payload}", $key, true);
+        if (empty($key)){
+            throw new JwtException("Secret Key cannot be empty",3);
+        }
+
+        $validAlgorithms = hash_algos();
+
+        if (empty($hashingAlgorithm) || !in_array($hashingAlgorithm, $validAlgorithms, true)){
+            throw new JwtException("Choose a valid hash algorithm",4);
+        }
+
+        $valid = hash_hmac($hashingAlgorithm, "{$this->header}.{$this->payload}", $key, true);
         $valid = $this->base64url_encode($valid);
 
-        if ($sign == $valid){
+        if ($this->sign == $valid){
             return true;
         }else{
             return false;
@@ -105,9 +116,9 @@ class JwtAuth{
     /**
      * @return string
      */
-    public function getToken(): string
+    public function getJwt(): string
     {
-        return $this->token;
+        return "{$this->header}.{$this->payload}.{$this->sign}";
     }
 
     /**
