@@ -4,6 +4,9 @@ namespace PakPak\JwtAuth;
 
 /**
  * Class JwtAuth
+ *
+ * @author Davi Lhlapak Rosa
+ * @license Apache 2.0
  * @package PakPak\JwtAuth
  */
 class JwtAuth{
