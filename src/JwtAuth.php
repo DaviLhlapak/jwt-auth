@@ -5,6 +5,7 @@ namespace PakPak\JwtAuth;
 /**
  * Class JwtAuth
  *
+ * A PHP Class for JWT manipulation using native PHP.
  * @author Davi Lhlapak Rosa
  * @license Apache 2.0
  * @package PakPak\JwtAuth
@@ -79,11 +80,11 @@ class JwtAuth{
 
         $jwt = new JwtAuth();
 
-        $jwt->header = self::base64url_encode(json_encode($header));
-        $jwt->payload = self::base64url_encode(json_encode($payload));
+        $jwt->header = JwtFunctions::base64url_encode(json_encode($header));
+        $jwt->payload = JwtFunctions::base64url_encode(json_encode($payload));
 
         $sign = hash_hmac($hashingAlgorithm, "{$jwt->header}.{$jwt->payload}", $key, true);
-        $jwt->sign = self::base64url_encode($sign);
+        $jwt->sign = JwtFunctions::base64url_encode($sign);
 
         return $jwt;
     }
@@ -107,10 +108,17 @@ class JwtAuth{
         }
 
         $valid = hash_hmac($hashingAlgorithm, "{$this->header}.{$this->payload}", $key, true);
-        $valid = $this->base64url_encode($valid);
+        $valid = JwtFunctions::base64url_encode($valid);
 
         if ($this->sign == $valid){
-            return true;
+
+            try{
+                $verify = JwtFunctions::verifyTokenExpiration($this->payload);
+            }catch (JwtException $e){
+                throw $e;
+            }
+
+            return $verify;
         }else{
             return false;
         }
@@ -129,7 +137,7 @@ class JwtAuth{
      */
     public function getHeader(): array
     {
-        return (array) json_decode($this->base64url_decode($this->header));
+        return (array) json_decode(JwtFunctions::base64url_decode($this->header));
     }
 
     /**
@@ -137,32 +145,6 @@ class JwtAuth{
      */
     public function getPayload(): array
     {
-        return (array) json_decode($this->base64url_decode($this->payload));
-    }
-
-
-    /**
-     * @param $data
-     * @return bool|string
-     */
-    private static function base64url_encode($data)
-    {
-        $b64 = base64_encode($data);
-        if ($b64 === false) {
-            return false;
-        }
-        $url = strtr($b64, '+/', '-_');
-        return rtrim($url, '=');
-    }
-
-    /**
-     * @param $data
-     * @param bool $strict
-     * @return false|string
-     */
-    private static function base64url_decode($data, $strict = false)
-    {
-        $b64 = strtr($data, '-_', '+/');
-        return base64_decode($b64, $strict);
+        return (array) json_decode(JwtFunctions::base64url_decode($this->payload));
     }
 }
