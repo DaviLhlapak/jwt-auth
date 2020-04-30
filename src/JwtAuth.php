@@ -22,11 +22,17 @@ class JwtAuth{
     private $sign;
 
     /**
-     * @param string $token
+     * Função que cria um JwtAuth a partir de um Jwt (token)
+     * @param string $token Token jwt
      * @return JwtAuth
      * @throws JwtException
      */
     public static function byJwt(string $token):JwtAuth{
+
+        if (empty($token)){
+            throw new JwtException(JwtException::ERROR_CODE_6,6);
+        }
+
         $part = explode(".",$token);
 
         $header = $part[0];
@@ -34,13 +40,13 @@ class JwtAuth{
         $sign = $part[2];
 
         if (empty($header)){
-            throw new JwtException("Header cannot be empty",1);
+            throw new JwtException(JwtException::ERROR_CODE_1,1);
         }
         if (empty($payload)){
-            throw new JwtException("Payload cannot be empty",2);
+            throw new JwtException(JwtException::ERROR_CODE_2,2);
         }
         if (empty($sign)){
-            throw new JwtException("Sign cannot be empty",5);
+            throw new JwtException(JwtException::ERROR_CODE_5,5);
         }
 
         $jwt = new JwtAuth();
@@ -53,6 +59,7 @@ class JwtAuth{
     }
 
     /**
+     * Função que cria um novo JwtAuth
      * @param array $header
      * @param array $payload
      * @param string $key
@@ -63,19 +70,19 @@ class JwtAuth{
     public static function createJwt(array $header, array $payload, string $key, string $hashingAlgorithm = 'sha256'):JwtAuth{
 
         if (empty($header)){
-            throw new JwtException("Header cannot be empty",1);
+            throw new JwtException(JwtException::ERROR_CODE_1,1);
         }
         if (empty($payload)){
-            throw new JwtException("Payload cannot be empty",2);
+            throw new JwtException(JwtException::ERROR_CODE_2,2);
         }
         if (empty($key)){
-            throw new JwtException("Secret Key cannot be empty",3);
+            throw new JwtException(JwtException::ERROR_CODE_3,3);
         }
 
         $validAlgorithms = hash_algos();
 
         if (empty($hashingAlgorithm) || !in_array($hashingAlgorithm, $validAlgorithms, true)){
-            throw new JwtException("Choose a valid hash algorithm",4);
+            throw new JwtException(JwtException::ERROR_CODE_4,4);
         }
 
         $jwt = new JwtAuth();
@@ -98,13 +105,13 @@ class JwtAuth{
     public function verifyJwt(string $key, string $hashingAlgorithm = 'sha256'):bool {
 
         if (empty($key)){
-            throw new JwtException("Secret Key cannot be empty",3);
+            throw new JwtException(JwtException::ERROR_CODE_3,3);
         }
 
         $validAlgorithms = hash_algos();
 
         if (empty($hashingAlgorithm) || !in_array($hashingAlgorithm, $validAlgorithms, true)){
-            throw new JwtException("Choose a valid hash algorithm",4);
+            throw new JwtException(JwtException::ERROR_CODE_4,4);
         }
 
         $valid = hash_hmac($hashingAlgorithm, "{$this->header}.{$this->payload}", $key, true);

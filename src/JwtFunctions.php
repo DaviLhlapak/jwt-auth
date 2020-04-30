@@ -42,7 +42,7 @@ class JwtFunctions{
     public static function verifyTokenExpiration(string $payload):bool{
 
         if (empty($payload)){
-            throw new JwtException("Payload cannot be empty",2);
+            throw new JwtException(JwtException::ERROR_CODE_2,2);
         }
 
         $payloadArray = json_decode(self::base64url_decode($payload));
@@ -51,7 +51,7 @@ class JwtFunctions{
         $exp = $payloadArray["exp"];
 
         if(empty($iat) || empty($exp)){
-            throw new JwtException("Invalid Token",6);
+            throw new JwtException(JwtException::ERROR_CODE_6,6);
         }
 
         if ($iat > $exp){
