@@ -42,3 +42,19 @@ $jwtAuth->getHeader();
 // - Returns an array containing the Payload
 $jwtAuth->getPayload();
 
+
+// - Creating a header using JwtFunctions:
+$algo = "HS256";
+$header = \PakPak\JwtAuth\JwtFunctions::createHeader($algo);
+
+// - Creating a Payload using JwtFunctions:
+$date = new DateTime("now");
+
+//Token’s origin
+$issuer = "www.meudominio.com";
+//Token’s subject
+$subject = "user";
+//Expires in 1 day
+$expiration = $date->add(\DateInterval::createFromDateString("1 day"))->getTimestamp();
+
+$payload = \PakPak\JwtAuth\JwtFunctions::createPayload($issuer,$subject,$expiration);

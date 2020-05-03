@@ -71,22 +71,22 @@ $jwtAuth->getHeader();
 $jwtAuth->getPayload();
 ```
 
-- Criando um Header usando JwtFunctions:
+- Creating a header using JwtFunctions:
 ````php
 $algo = "HS256";
 
 $header = \PakPak\JwtAuth\JwtFunctions::createHeader($algo);
 ````
 
-- Criando um Payload usando JwtFunctions:
+- Creating a Payload using JwtFunctions:
 ````php
 $date = new DateTime("now");
 
-//Origem do Token
+//Token’s origin
 $issuer = "www.meudominio.com";
-//Assunto do Token
+//Token’s subject
 $subject = "user";
-//Expira em 1 dia
+//Expires in 1 day
 $expiration = $date->add(\DateInterval::createFromDateString("1 day"))->getTimestamp();
 
 $payload = \PakPak\JwtAuth\JwtFunctions::createPayload($issuer,$subject,$expiration);
