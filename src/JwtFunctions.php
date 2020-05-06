@@ -9,13 +9,12 @@ use DateTime;
 class JwtFunctions{
 
     /**
-     * @param string $algo
      * @return array|string[]
      */
-    public static function createHeader(string $algo):array{
+    public static function createHeader():array{
         return [
             'typ' => 'JWT',
-            'alg' => $algo
+            'alg' => 'HS256'
         ];
     }
 

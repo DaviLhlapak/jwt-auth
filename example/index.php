@@ -44,8 +44,7 @@ $jwtAuth->getPayload();
 
 
 // - Creating a header using JwtFunctions:
-$algo = "HS256";
-$header = \PakPak\JwtAuth\JwtFunctions::createHeader($algo);
+$header = \PakPak\JwtAuth\JwtFunctions::createHeader();
 
 // - Creating a Payload using JwtFunctions:
 $date = new DateTime("now");

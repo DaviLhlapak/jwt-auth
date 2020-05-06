@@ -73,9 +73,7 @@ $jwtAuth->getPayload();
 
 - Creating a header using JwtFunctions:
 ````php
-$algo = "HS256";
-
-$header = \PakPak\JwtAuth\JwtFunctions::createHeader($algo);
+$header = \PakPak\JwtAuth\JwtFunctions::createHeader();
 ````
 
 - Creating a Payload using JwtFunctions:
