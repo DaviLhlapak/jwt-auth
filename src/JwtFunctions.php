@@ -53,7 +53,9 @@ class JwtFunctions{
             throw new JwtException(JwtException::ERROR_CODE_6,6);
         }
 
-        if ($iat > $exp){
+        $now = (new DateTime("now"))->getTimestamp();
+
+        if ($now > $exp){
             return false;
         }
 
