@@ -44,7 +44,7 @@ class JwtFunctions{
             throw new JwtException(JwtException::ERROR_CODE_2,2);
         }
 
-        $payloadArray = json_decode(self::base64url_decode($payload));
+        $payloadArray = json_decode(self::base64url_decode($payload),true);
 
         $iat = $payloadArray["iat"];
         $exp = $payloadArray["exp"];
