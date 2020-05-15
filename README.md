@@ -73,11 +73,15 @@ $jwtAuth->getPayload();
 
 - Creating a header using JwtFunctions:
 ````php
-$header = \PakPak\JwtAuth\JwtFunctions::createHeader();
+use PakPak\JwtAuth\JwtFunctions;
+
+$header = JwtFunctions::createHeader();
 ````
 
 - Creating a Payload using JwtFunctions:
 ````php
+use PakPak\JwtAuth\JwtFunctions;
+
 $date = new DateTime("now");
 
 //Token’s origin
@@ -87,7 +91,7 @@ $subject = "user";
 //Expires in 1 day
 $expiration = $date->add(\DateInterval::createFromDateString("1 day"))->getTimestamp();
 
-$payload = \PakPak\JwtAuth\JwtFunctions::createPayload($issuer,$subject,$expiration);
+$payload = JwtFunctions::createPayload($issuer,$subject,$expiration);
 ````
 ## JwtException
 
