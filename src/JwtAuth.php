@@ -144,7 +144,7 @@ class JwtAuth{
      */
     public function getHeader(): array
     {
-        return (array) json_decode(JwtFunctions::base64url_decode($this->header));
+        return (array) json_decode(JwtFunctions::base64url_decode($this->header),true);
     }
 
     /**
@@ -152,6 +152,6 @@ class JwtAuth{
      */
     public function getPayload(): array
     {
-        return (array) json_decode(JwtFunctions::base64url_decode($this->payload));
+        return (array) json_decode(JwtFunctions::base64url_decode($this->payload),true);
     }
 }
