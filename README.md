@@ -6,7 +6,7 @@ A PHP library for JWT manipulation using native PHP.
 Jwt-Auth is avaliable via Composer
 
 ```bash
-"pakpak/jwt-auth": "^1.5.2"
+"pakpak/jwt-auth": "^1.5.3"
 ```
 
 or via terminal:
