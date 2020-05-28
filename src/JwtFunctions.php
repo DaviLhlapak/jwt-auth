@@ -62,6 +62,7 @@ class JwtFunctions{
         return true;
     }
 
+
     /**
      * @param $data
      * @return bool|string

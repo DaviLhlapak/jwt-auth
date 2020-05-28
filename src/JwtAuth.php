@@ -21,6 +21,9 @@ class JwtAuth{
     /** @var string */
     private $sign;
 
+    /** @var JwtException */
+    private $error;
+
     /**
      * Função que cria um JwtAuth a partir de um Jwt (token)
      * @param string $token Token jwt
@@ -118,14 +121,12 @@ class JwtAuth{
         $valid = JwtFunctions::base64url_encode($valid);
 
         if ($this->sign == $valid){
-
             try{
-                $verify = JwtFunctions::verifyTokenExpiration($this->payload);
-            }catch (JwtException $e){
-                throw $e;
+                return JwtFunctions::verifyTokenExpiration($this->payload);
+            }catch (JwtException $exception){
+                $this->error = $exception;
+                return false;
             }
-
-            return $verify;
         }else{
             return false;
         }
@@ -153,5 +154,9 @@ class JwtAuth{
     public function getPayload(): array
     {
         return (array) json_decode(JwtFunctions::base64url_decode($this->payload),true);
+    }
+
+    public function error():?JwtException{
+        return $this->error;
     }
 }
