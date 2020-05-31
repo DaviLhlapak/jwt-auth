@@ -19,6 +19,9 @@ class JwtPayload
     /** Identifies the time at which the JWT was issued. @var int */
     private $issuedAt;
 
+    /** Another claims array. @var array */
+    private $privateClaims;
+
     /**
      * JwtPayload constructor.
      * If $ expirationTime or $ issueAt is not provided, by default, the Payload will contain the expiration date of 1 day.
@@ -28,17 +31,18 @@ class JwtPayload
      * @param int $expirationTime
      * @param int $issuedAt
      */
-    public function __construct(string $issuer, string $subject, int $expirationTime = 0, int $issuedAt = 0){
+    public function __construct(string $issuer, string $subject, int $expirationTime = 0, int $issuedAt = 0)
+    {
 
-        if (empty($issuedAt)){
+        if (empty($issuedAt)) {
             $this->issuedAt = (new DateTime("now"))->getTimestamp();
-        }else{
+        } else {
             $this->issuedAt = $issuedAt;
         }
 
-        if (empty($issuedAt)){
+        if (empty($issuedAt)) {
             $this->expirationTime = (new DateTime("now"))->add(\DateInterval::createFromDateString("1 day"))->getTimestamp();
-        }else{
+        } else {
             $this->expirationTime = $expirationTime;
         }
 
@@ -46,7 +50,13 @@ class JwtPayload
         $this->subject = $subject;
     }
 
-    public function getPayload():array{
+    public static function createByArray(array $payload): JwtPayload
+    {
+        $payload = new JwtPayload($payload["iss"], $payload["sub"], $payload["exp"], $payload["iss"]);
+    }
+
+    public function getPayload(): array
+    {
         return [
             'iss' => $this->issuer,
             'iat' => $this->issuedAt,
