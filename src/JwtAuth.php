@@ -115,18 +115,19 @@ class JwtAuth{
     /**
      * @param string $jwt
      * @return bool
-     * @throws JwtException
      */
     public function verifyJwt(string $jwt):bool {
 
         if (empty($jwt)){
-            throw new JwtException(JwtException::ERROR_CODE_3,3);
+            $this->error = new JwtException(JwtException::ERROR_CODE_3,3);
+            return false;
         }
 
         $validAlgorithms = hash_algos();
 
         if (empty($hashingAlgorithm) || !in_array($hashingAlgorithm, $validAlgorithms, true)){
-            throw new JwtException(JwtException::ERROR_CODE_4,4);
+            $this->error = new JwtException(JwtException::ERROR_CODE_4,4);
+            return false;
         }
 
         $valid = hash_hmac('sha256', "{$this->header}.{$this->payload}", $jwt, true);
