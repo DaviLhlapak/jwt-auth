@@ -15,7 +15,7 @@ class JwtAuth{
     /** @var string */
     private $header;
 
-    /** @var string */
+    /** @var JwtPayload */
     private $payload;
 
     /** @var string */
@@ -64,17 +64,13 @@ class JwtAuth{
     /**
      * Função que cria um novo JwtAuth
      * @param array $header
-     * @param array $payload
+     * @param JwtPayload $payload
      * @param string $key
-     * @param string $hashingAlgorithm
      * @return JwtAuth
      * @throws JwtException
      */
-    public static function createJwt(array $header, array $payload, string $key, string $hashingAlgorithm = 'sha256'):JwtAuth{
+    public static function createJwt(JwtPayload $payload, string $key, array $header = []):JwtAuth{
 
-        if (empty($header)){
-            throw new JwtException(JwtException::ERROR_CODE_1,1);
-        }
         if (empty($payload)){
             throw new JwtException(JwtException::ERROR_CODE_2,2);
         }
@@ -90,24 +86,28 @@ class JwtAuth{
 
         $jwt = new JwtAuth();
 
-        $jwt->header = JwtFunctions::base64url_encode(json_encode($header));
+        if (empty($header)){
+            $jwt->header = JwtFunctions::base64url_encode(json_encode(JwtFunctions::createHeader()));
+        }else{
+            $jwt->header = JwtFunctions::base64url_encode(json_encode($header));
+        }
+
         $jwt->payload = JwtFunctions::base64url_encode(json_encode($payload));
 
-        $sign = hash_hmac($hashingAlgorithm, "{$jwt->header}.{$jwt->payload}", $key, true);
+        $sign = hash_hmac('sha256', "{$jwt->header}.{$jwt->payload}", $key, true);
         $jwt->sign = JwtFunctions::base64url_encode($sign);
 
         return $jwt;
     }
 
     /**
-     * @param string $key
-     * @param string $hashingAlgorithm
+     * @param string $jwt
      * @return bool
      * @throws JwtException
      */
-    public function verifyJwt(string $key, string $hashingAlgorithm = 'sha256'):bool {
+    public function verifyJwt(string $jwt):bool {
 
-        if (empty($key)){
+        if (empty($jwt)){
             throw new JwtException(JwtException::ERROR_CODE_3,3);
         }
 
@@ -117,7 +117,7 @@ class JwtAuth{
             throw new JwtException(JwtException::ERROR_CODE_4,4);
         }
 
-        $valid = hash_hmac($hashingAlgorithm, "{$this->header}.{$this->payload}", $key, true);
+        $valid = hash_hmac('sha256', "{$this->header}.{$this->payload}", $jwt, true);
         $valid = JwtFunctions::base64url_encode($valid);
 
         if ($this->sign == $valid){

@@ -50,9 +50,16 @@ class JwtPayload
         $this->subject = $subject;
     }
 
-    public static function createByArray(array $payload): JwtPayload
+    public static function createByArray(array $payload, bool $encoded): JwtPayload
     {
-        $payload = new JwtPayload($payload["iss"], $payload["sub"], $payload["exp"], $payload["iss"]);
+        if ($encoded){
+            $decodedPayload = json_decode(JwtFunctions::base64url_decode($payload),true);
+
+            return new JwtPayload($decodedPayload["iss"], $decodedPayload["sub"], $decodedPayload["exp"], $decodedPayload["iss"]);
+        }else{
+            return new JwtPayload($payload["iss"], $payload["sub"], $payload["exp"], $payload["iss"]);
+        }
+
     }
 
     public function getPayload(): array
