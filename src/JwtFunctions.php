@@ -3,9 +3,6 @@
 
 namespace PakPak\JwtAuth;
 
-
-use DateTime;
-
 class JwtFunctions{
 
     /**
@@ -16,50 +13,6 @@ class JwtFunctions{
             'typ' => 'JWT',
             'alg' => 'HS256'
         ];
-    }
-
-    /**
-     * @param string $issuer Token's origin
-     * @param string $subject Entity to which the token belongs
-     * @param int $expiration Timestamp of when the token expires
-     * @return array|string[]
-     */
-    public static function createPayload(string $issuer, string $subject, int $expiration):array{
-        return [
-            'iss' => $issuer,
-            'iat' => (new DateTime("now"))->getTimestamp(),
-            'exp' => $expiration,
-            'sub' => $subject
-        ];
-    }
-
-    /**
-     * @param string $payload
-     * @return bool
-     * @throws JwtException
-     */
-    public static function verifyTokenExpiration(string $payload):bool{
-
-        if (empty($payload)){
-            throw new JwtException(JwtException::ERROR_CODE_2,2);
-        }
-
-        $payloadArray = json_decode(self::base64url_decode($payload),true);
-
-        $iat = $payloadArray["iat"];
-        $exp = $payloadArray["exp"];
-
-        if(empty($iat) || empty($exp)){
-            throw new JwtException(JwtException::ERROR_CODE_6,6);
-        }
-
-        $now = (new DateTime("now"))->getTimestamp();
-
-        if ($now > $exp){
-            return false;
-        }
-
-        return true;
     }
 
 

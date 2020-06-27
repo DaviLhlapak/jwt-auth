@@ -2,10 +2,13 @@
 
 namespace PakPak\JwtAuth;
 
+use DateTime;
+
 /**
  * Class JwtAuth
  *
  * A PHP Class for JWT manipulation using native PHP.
+ *
  * @author Davi Lhlapak Rosa
  * @license Apache 2.0
  * @package PakPak\JwtAuth
@@ -62,8 +65,10 @@ class JwtAuth{
         $jwt = new JwtAuth();
 
         $jwt->header = $header;
-        $jwt->payload = $payload;
         $jwt->sign = $sign;
+
+        $payload = json_decode(JwtFunctions::base64url_decode($payload),true);
+        $jwt->payload = JwtPayload::createByArray($payload);
 
         return $jwt;
     }
@@ -104,7 +109,7 @@ class JwtAuth{
             $jwt->header = JwtFunctions::base64url_encode(json_encode($header));
         }
 
-        $jwt->payload = JwtFunctions::base64url_encode(json_encode($payload));
+        $jwt->payload = $payload;
 
         $sign = hash_hmac('sha256', "{$jwt->header}.{$jwt->payload}", $key, true);
         $jwt->sign = JwtFunctions::base64url_encode($sign);
@@ -130,12 +135,12 @@ class JwtAuth{
             return false;
         }
 
-        $valid = hash_hmac('sha256', "{$this->header}.{$this->payload}", $jwt, true);
+        $valid = hash_hmac('sha256', "{$this->header}.{$this->payload->getPayloadString()}", $jwt, true);
         $valid = JwtFunctions::base64url_encode($valid);
 
         if ($this->sign == $valid){
             try{
-                return JwtFunctions::verifyTokenExpiration($this->payload);
+                return $this->verifyTokenExpiration($this->payload->getPayloadArray());
             }catch (JwtException $exception){
                 $this->error = $exception;
                 return false;
@@ -146,11 +151,38 @@ class JwtAuth{
     }
 
     /**
+     * @param array $payload
+     * @return bool
+     * @throws JwtException
+     */
+    private function verifyTokenExpiration(array $payload):bool{
+
+        if (empty($payload)){
+            throw new JwtException(JwtException::ERROR_CODE_2,2);
+        }
+
+        $iat = $payload["iat"];
+        $exp = $payload["exp"];
+
+        if(empty($iat) || empty($exp)){
+            throw new JwtException(JwtException::ERROR_CODE_6,6);
+        }
+
+        $now = (new DateTime("now"))->getTimestamp();
+
+        if ($now > $exp){
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * @return string
      */
     public function getJwt(): string
     {
-        return "{$this->header}.{$this->payload}.{$this->sign}";
+        return "{$this->header}.{$this->payload->getPayloadString()}.{$this->sign}";
     }
 
     /**
@@ -166,7 +198,7 @@ class JwtAuth{
      */
     public function getPayload(): array
     {
-        return (array) json_decode(JwtFunctions::base64url_decode($this->payload),true);
+        return $this->payload->getPayloadArray();
     }
 
     public function error():?JwtException{

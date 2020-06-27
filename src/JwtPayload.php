@@ -28,11 +28,15 @@ class JwtPayload
      *
      * @param String $issuer
      * @param String $subject
-     * @param int $expirationTime
-     * @param int $issuedAt
+     * @param int    $expirationTime
+     * @param int    $issuedAt
      */
-    public function __construct(string $issuer, string $subject, int $expirationTime = 0, int $issuedAt = 0)
-    {
+    public function __construct(
+        string $issuer,
+        string $subject,
+        int $expirationTime = 0,
+        int $issuedAt = 0
+    ) {
 
         if (empty($issuedAt)) {
             $this->issuedAt = (new DateTime("now"))->getTimestamp();
@@ -41,7 +45,9 @@ class JwtPayload
         }
 
         if (empty($issuedAt)) {
-            $this->expirationTime = (new DateTime("now"))->add(\DateInterval::createFromDateString("1 day"))->getTimestamp();
+            $this->expirationTime
+                = (new DateTime("now"))->add(\DateInterval::createFromDateString("1 day"))
+                ->getTimestamp();
         } else {
             $this->expirationTime = $expirationTime;
         }
@@ -50,19 +56,14 @@ class JwtPayload
         $this->subject = $subject;
     }
 
-    public static function createByArray(array $payload, bool $encoded): JwtPayload
+    public static function createByArray(array $payload): JwtPayload
     {
-        if ($encoded){
-            $decodedPayload = json_decode(JwtFunctions::base64url_decode($payload),true);
-
-            return new JwtPayload($decodedPayload["iss"], $decodedPayload["sub"], $decodedPayload["exp"], $decodedPayload["iss"]);
-        }else{
-            return new JwtPayload($payload["iss"], $payload["sub"], $payload["exp"], $payload["iss"]);
-        }
+        return new JwtPayload($payload["iss"], $payload["sub"], $payload["exp"],
+            $payload["iss"]);
 
     }
 
-    public function getPayload(): array
+    public function getPayloadArray(): array
     {
         return [
             'iss' => $this->issuer,
@@ -70,6 +71,16 @@ class JwtPayload
             'exp' => $this->expirationTime,
             'sub' => $this->subject
         ];
+    }
+
+    public function getPayloadString(): string
+    {
+        return JwtFunctions::base64url_encode(json_encode([
+            'iss' => $this->issuer,
+            'iat' => $this->issuedAt,
+            'exp' => $this->expirationTime,
+            'sub' => $this->subject
+        ]));
     }
 
 }
