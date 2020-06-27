@@ -28,12 +28,13 @@ class JwtAuth{
      * Função que cria um JwtAuth a partir de um Jwt (token)
      * @param string $token Token jwt
      * @return JwtAuth
-     * @throws JwtException
      */
     public static function byJwt(string $token):JwtAuth{
 
         if (empty($token)){
-            throw new JwtException(JwtException::ERROR_CODE_6,6);
+            $jwt = new JwtAuth();
+            $jwt->error = new JwtException(JwtException::ERROR_CODE_6,6);
+            return $jwt;
         }
 
         $part = explode(".",$token);
@@ -43,13 +44,19 @@ class JwtAuth{
         $sign = $part[2];
 
         if (empty($header)){
-            throw new JwtException(JwtException::ERROR_CODE_1,1);
+            $jwt = new JwtAuth();
+            $jwt->error = new JwtException(JwtException::ERROR_CODE_1,1);
+            return $jwt;
         }
         if (empty($payload)){
-            throw new JwtException(JwtException::ERROR_CODE_2,2);
+            $jwt = new JwtAuth();
+            $jwt->error = new JwtException(JwtException::ERROR_CODE_2,2);
+            return $jwt;
         }
         if (empty($sign)){
-            throw new JwtException(JwtException::ERROR_CODE_5,5);
+            $jwt = new JwtAuth();
+            $jwt->error = new JwtException(JwtException::ERROR_CODE_5,5);
+            return $jwt;
         }
 
         $jwt = new JwtAuth();
@@ -67,21 +74,26 @@ class JwtAuth{
      * @param JwtPayload $payload
      * @param string $key
      * @return JwtAuth
-     * @throws JwtException
      */
     public static function createJwt(JwtPayload $payload, string $key, array $header = []):JwtAuth{
 
         if (empty($payload)){
-            throw new JwtException(JwtException::ERROR_CODE_2,2);
+            $jwt = new JwtAuth();
+            $jwt->error = new JwtException(JwtException::ERROR_CODE_2,2);
+            return $jwt;
         }
         if (empty($key)){
-            throw new JwtException(JwtException::ERROR_CODE_3,3);
+            $jwt = new JwtAuth();
+            $jwt->error = new JwtException(JwtException::ERROR_CODE_3,3);
+            return $jwt;
         }
 
         $validAlgorithms = hash_algos();
 
         if (empty($hashingAlgorithm) || !in_array($hashingAlgorithm, $validAlgorithms, true)){
-            throw new JwtException(JwtException::ERROR_CODE_4,4);
+            $jwt = new JwtAuth();
+            $jwt->error = new JwtException(JwtException::ERROR_CODE_4,4);
+            return $jwt;
         }
 
         $jwt = new JwtAuth();
