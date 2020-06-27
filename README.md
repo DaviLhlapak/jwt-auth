@@ -6,7 +6,7 @@ A PHP library for JWT manipulation using native PHP.
 Jwt-Auth is avaliable via Composer
 
 ```bash
-"pakpak/jwt-auth": "^1.5.3"
+"pakpak/jwt-auth": "^2.0.0"
 ```
 
 or via terminal:
@@ -23,33 +23,25 @@ composer require pakpak/jwt-auth
 use PakPak\JwtAuth\JwtAuth;
 ```
 
+
+
 - Creating a JWT:
 
 ```php
-$header = [
-    'typ' => 'JWT',
-    'alg' => 'HS256'
-];
-$payload = [
-    'iss' => "localhost",
-    'sub' => 'User Name Yoshi'
-];
+use PakPak\JwtAuth\JwtAuth;
+use PakPak\JwtAuth\JwtPayload;
+
+$payload = new JwtPayload("localhost","user_id");
 $key = "My-Secret-Key";
 
-$jwtAuth = JwtAuth::createJwt($header, $payload, $key);
-```
-
-- Specifying the hash algorithm for JWT creation
-
-```php
-$hashingAlgorithm = "sha256";
-
-$jwtAuth = JwtAuth::createJwt($header, $payload, $key, $hashingAlgorithm);
+$jwtAuth = JwtAuth::createJwt($payload, $key);
 ```
 
 - Creating a JWT from a token
 
 ```php
+use PakPak\JwtAuth\JwtAuth;
+
 $jwtToken = "header.payload.sign";
 
 $jwtAuth = JwtAuth::byJwt($jwtToken);
@@ -58,8 +50,7 @@ $jwtAuth = JwtAuth::byJwt($jwtToken);
 - Recovering data:
 ```php
 // - Validates the token created using the access key
-$hashingAlgorithm = "sha256";
-$jwtAuth->verifyJwt("My-Secret-Key",$hashingAlgorithm);
+$jwtAuth->verifyJwt("My-Secret-Key");
 
 // - Returns a String containing the JWT Token
 $jwtAuth->getJwt();
@@ -78,30 +69,25 @@ use PakPak\JwtAuth\JwtFunctions;
 $header = JwtFunctions::createHeader();
 ````
 
-- Creating a Payload using JwtFunctions:
+- Creating a Payload:
 ````php
-use PakPak\JwtAuth\JwtFunctions;
-
-$date = new DateTime("now");
+use PakPak\JwtAuth\JwtPayload;
 
 //Token’s origin
 $issuer = "www.meudominio.com";
 //Token’s subject
-$subject = "user";
-//Expires in 1 day
-$expiration = $date->add(\DateInterval::createFromDateString("1 day"))->getTimestamp();
+$subject = "user_id";
 
-$payload = JwtFunctions::createPayload($issuer,$subject,$expiration);
+$payload = new JwtPayload($issuer,$subject);
 ````
 ## JwtException
 
 - Error codes:
 
-```text
-Code 1: "Header cannot be empty"
-Code 2: "Payload cannot be empty"
-Code 3: "Secret Key cannot be empty"
-Code 4: "Choose a valid hash algorithm"
-Code 5: "Sign cannot be empty"
-Code 6: "Invalid Token"
-```
+| Code | Message          |
+| :---- | :-------------: |
+| 1 | "Header cannot be empty" |
+| 2 | "Payload cannot be empty" |
+| 3 | "Secret Key cannot be empty" |
+| 4 | "Sign cannot be empty" |
+| 5 | "Invalid Token" |

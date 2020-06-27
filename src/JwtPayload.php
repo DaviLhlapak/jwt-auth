@@ -97,7 +97,7 @@ class JwtPayload
         $exp = $this->expirationTime;
 
         if(empty($iat) || empty($exp)){
-            throw new JwtException(JwtException::ERROR_CODE_6,6);
+            throw new JwtException(JwtException::ERROR_CODE_5,5);
         }
 
         $now = (new DateTime("now"))->getTimestamp();

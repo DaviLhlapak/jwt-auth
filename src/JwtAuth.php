@@ -36,7 +36,7 @@ class JwtAuth{
 
         if (empty($token)){
             $jwt = new JwtAuth();
-            $jwt->error = new JwtException(JwtException::ERROR_CODE_6,6);
+            $jwt->error = new JwtException(JwtException::ERROR_CODE_5,5);
             return $jwt;
         }
 
@@ -58,7 +58,7 @@ class JwtAuth{
         }
         if (empty($sign)){
             $jwt = new JwtAuth();
-            $jwt->error = new JwtException(JwtException::ERROR_CODE_5,5);
+            $jwt->error = new JwtException(JwtException::ERROR_CODE_4,4);
             return $jwt;
         }
 
@@ -90,14 +90,6 @@ class JwtAuth{
         if (empty($key)){
             $jwt = new JwtAuth();
             $jwt->error = new JwtException(JwtException::ERROR_CODE_3,3);
-            return $jwt;
-        }
-
-        $validAlgorithms = hash_algos();
-
-        if (empty($hashingAlgorithm) || !in_array($hashingAlgorithm, $validAlgorithms, true)){
-            $jwt = new JwtAuth();
-            $jwt->error = new JwtException(JwtException::ERROR_CODE_4,4);
             return $jwt;
         }
 
