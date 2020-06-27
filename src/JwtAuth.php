@@ -140,7 +140,7 @@ class JwtAuth{
 
         if ($this->sign == $valid){
             try{
-                return $this->verifyTokenExpiration($this->payload->getPayloadArray());
+                return $this->payload->verifyTokenExpiration();
             }catch (JwtException $exception){
                 $this->error = $exception;
                 return false;
@@ -148,33 +148,6 @@ class JwtAuth{
         }else{
             return false;
         }
-    }
-
-    /**
-     * @param array $payload
-     * @return bool
-     * @throws JwtException
-     */
-    private function verifyTokenExpiration(array $payload):bool{
-
-        if (empty($payload)){
-            throw new JwtException(JwtException::ERROR_CODE_2,2);
-        }
-
-        $iat = $payload["iat"];
-        $exp = $payload["exp"];
-
-        if(empty($iat) || empty($exp)){
-            throw new JwtException(JwtException::ERROR_CODE_6,6);
-        }
-
-        $now = (new DateTime("now"))->getTimestamp();
-
-        if ($now > $exp){
-            return false;
-        }
-
-        return true;
     }
 
     /**

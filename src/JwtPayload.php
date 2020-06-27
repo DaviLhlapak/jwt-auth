@@ -83,4 +83,31 @@ class JwtPayload
         ]));
     }
 
+    /**
+     * @return bool
+     * @throws JwtException
+     */
+    public function verifyTokenExpiration():bool{
+
+        if (empty($payload)){
+            throw new JwtException(JwtException::ERROR_CODE_2,2);
+        }
+
+        $iat = $this->issuedAt;
+        $exp = $this->expirationTime;
+
+        if(empty($iat) || empty($exp)){
+            throw new JwtException(JwtException::ERROR_CODE_6,6);
+        }
+
+        $now = (new DateTime("now"))->getTimestamp();
+
+        if ($now > $exp){
+            return false;
+        }
+
+        return true;
+    }
+
+
 }
