@@ -103,7 +103,7 @@ class JwtAuth{
 
         $jwt->payload = $payload;
 
-        $sign = hash_hmac('sha256', "{$jwt->header}.{$jwt->payload}", $key, true);
+        $sign = hash_hmac('sha256', "{$jwt->header}.{$jwt->payload->getPayloadString()}", $key, true);
         $jwt->sign = JwtFunctions::base64url_encode($sign);
 
         return $jwt;
