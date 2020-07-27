@@ -110,24 +110,17 @@ class JwtAuth{
     }
 
     /**
-     * @param string $jwt
+     * @param string $key
      * @return bool
      */
-    public function verifyJwt(string $jwt):bool {
+    public function verifyJwt(string $key):bool {
 
-        if (empty($jwt)){
+        if (empty($key)){
             $this->error = new JwtException(JwtException::ERROR_CODE_3,3);
             return false;
         }
 
-        $validAlgorithms = hash_algos();
-
-        if (empty($hashingAlgorithm) || !in_array($hashingAlgorithm, $validAlgorithms, true)){
-            $this->error = new JwtException(JwtException::ERROR_CODE_4,4);
-            return false;
-        }
-
-        $valid = hash_hmac('sha256', "{$this->header}.{$this->payload->getPayloadString()}", $jwt, true);
+        $valid = hash_hmac('sha256', "{$this->header}.{$this->payload->getPayloadString()}", $key, true);
         $valid = JwtFunctions::base64url_encode($valid);
 
         if ($this->sign == $valid){
