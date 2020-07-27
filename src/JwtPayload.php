@@ -44,7 +44,7 @@ class JwtPayload
             $this->issuedAt = $issuedAt;
         }
 
-        if (empty($issuedAt)) {
+        if (empty($expirationTime)) {
             $this->expirationTime
                 = (new DateTime("now"))->add(\DateInterval::createFromDateString("1 day"))
                 ->getTimestamp();
@@ -59,7 +59,7 @@ class JwtPayload
     public static function createByArray(array $payload): JwtPayload
     {
         return new JwtPayload($payload["iss"], $payload["sub"], $payload["exp"],
-            $payload["iss"]);
+            $payload["iat"]);
 
     }
 
