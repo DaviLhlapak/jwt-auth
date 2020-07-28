@@ -89,10 +89,6 @@ class JwtPayload
      */
     public function verifyTokenExpiration():bool{
 
-        if (empty($payload)){
-            throw new JwtException(JwtException::ERROR_CODE_2,2);
-        }
-
         $iat = $this->issuedAt;
         $exp = $this->expirationTime;
 
